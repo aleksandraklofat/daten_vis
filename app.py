@@ -1,6 +1,8 @@
 # importing pckg
 import streamlit as st
 import pandas as pd
+#from pandas_profiling import ProfileReport
+#from streamlit_pandas_profiling import st_profile_report
 
 import sys
 import os
@@ -37,7 +39,7 @@ if uploaded_file is not None:
         filesize = get_filesize(uploaded_file)
         if filesize <= 10:
             if ext == ".csv":
-                 df = pd.read_csv(uploaded_file, encoding= 'unicode_escape')
+                 df = pd.read_csv(uploaded_file, encoding= 'unicode_escape', sep=';')
 
             else:
                  xl_file = pd.ExcelFile(uploaded_file)
@@ -46,11 +48,13 @@ if uploaded_file is not None:
                  df = xl_file.parse(sheet_name)
 
 
-            # generate report (takes time)
+            
             with st.spinner("Bericht wird erstellt..."):
-                 pr = ProfileReport(df)
+                 data = st.dataframe(data=df)
 
-            st_profile_report(pr)
+            #st_profile_report(pr)
+
+                 describe = st.dataframe(data=df)
         else:
                 st.error(f"Die maximale erlaubte Dateigröße beträgt 10 MB. Aber empfangen wurden {filesize} MB")
 
@@ -60,4 +64,6 @@ if uploaded_file is not None:
 else:
     st.title('Data Profiler')
     st.info('Lade deine Dateien in der linken Seitenleiste hoch, um ein Profiling zu erstellen')
+
+describe = st.dataframe(data=df)
     
